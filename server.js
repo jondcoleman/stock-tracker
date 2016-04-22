@@ -31,7 +31,7 @@ io.on('connection', function (socket) {
   // io.sockets.emit('init', { stocks: [{stockName: 'XOM'},{stockName: 'APL'}] });
   socket.on('firstStock', function(symbol) {
     getStockData(symbol, function(data) {
-      io.sockets.emit('firstStockRes', data)
+      socket.emit('firstStockRes', data)
     })
   })
   socket.on('addStock', function (symbol) {
