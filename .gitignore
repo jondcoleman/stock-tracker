@@ -1,5 +1,5 @@
 node_modules/
-.eslintrc
+.tern-project
 .env
 .vscode/
 dist/

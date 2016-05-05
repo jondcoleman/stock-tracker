@@ -25,4 +25,4 @@ gulp.task('watch',function() {
 	gulp.watch(['./src/*.js'],['es6'])
 });
 
-gulp.task('default', ['es6','watch']);
+gulp.task('default', ['watch','es6']);
