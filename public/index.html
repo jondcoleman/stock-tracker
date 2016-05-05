@@ -3,23 +3,29 @@
 <head>
   <meta charset="utf-8">
   <title>Stock Tracker</title>
-  <style media="screen">
-    .container {
-      width: 80%;
-      margin: 0 auto
-    }
-  </style>
+  <link rel="stylesheet" href="/public/gh-buttons.css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="/public/style.css" media="screen" charset="utf-8">
 </head>
 
 <body>
-  <div class="container">
-    <canvas id="chart"></canvas>
-    <input type="text" id="stock-to-add" value="">
-    <button type="button" id="btn-add-stock">Add Stock</button>
-    <ul id="stock-list"></ul>
+    <div class="container">
+        <canvas id="chart"></canvas>
+        <div class="col-left">
+          <form class="">
+              <div class="form-container">
+                  <input type="text" class="input-standard" id="stock-to-add" value="" placeholder="AAPL">
+              </div>
+              <div class="form-container">
+                  <button type="submit" class="button big add icon" id="btn-add-stock">Add Stock</button>
+              </div>
+          </form>
+        </div>
+        <div class="col-right">
+          <div id="stock-list"></div>
+        </div>
 
-    <script src="/dist/app.js"></script>
-  </div>
+        <script src="/dist/app.js"></script>
+    </div>
 
 </body>
 

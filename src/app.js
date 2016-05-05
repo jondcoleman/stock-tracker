@@ -29,12 +29,12 @@ docReady(function() {
       let html = ''
       store.stocks.forEach(function(stock) {
           console.log(stock)
-          html += `<li data-symbol=${stock.symbol}>${stock.symbol}</li>`
+          html += `<div data-symbol=${stock.symbol} class="button big remove icon btn-stock">${stock.symbol}</div>`
       })
 
       document.getElementById('stock-list').innerHTML = html
 
-      let stocks = document.querySelectorAll('#stock-list > li')
+      let stocks = document.querySelectorAll('#stock-list > div')
 
       // add event listeners to each li
       for (let i = 0; i < stocks.length;  i++) {
@@ -66,6 +66,7 @@ docReady(function() {
     }
 
     addBtn.addEventListener('click', function(e) {
+        e.preventDefault()
         addStock(stockInput.value.toUpperCase())
         stockInput.value = ""
     })

@@ -44,7 +44,7 @@ function deleteStock(symbol, callback) {
     return item.symbol === symbol
   })
   let symbolList = stockList.map(function(stock){
-    return stock.symbol
+    return stock.symbol 
   })
   stockList.splice(index, 1)
   callback()
@@ -66,6 +66,7 @@ io.on('connection', function(socket) {
     })
 });
 app.use('/dist', express.static('dist'))
+app.use('/public', express.static('public'))
 
 app.use('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));

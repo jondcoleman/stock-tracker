@@ -1,0 +1,39 @@
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.col-left {
+    width: 50%;
+    float: left;
+}
+
+.col-right {
+    width: 50%;
+    float: right;
+}
+
+.form-container {
+  text-align: center;
+  margin: 30px 0px 0px 0px;
+}
+
+.input-standard {
+  border: none;
+  border-bottom: 1px solid grey;
+  text-align: center;
+}
+
+.input-standard:focus {
+  outline: none;
+}
+
+.btn-stock {
+  width: 90;
+  margin: 15px;
+}
+
+div#stock-list {
+    margin: 25 0 0 0;
+    text-align: left;
+}
