@@ -7,6 +7,7 @@ const baseUrl = window.location.origin
 const socket = io(baseUrl)
 
 let stockChart
+let symbolList
 
 function docReady(fn) {
   if (document.readyState !== 'loading') {
@@ -68,5 +69,11 @@ docReady(() => {
         detail: actions.updateStocks(stockData)
       })
     )
+  })
+
+  socket.on('symbolList', (symbolData) => {
+    symbolList = symbolData
+    console.log(symbolList.length)
+    const v = new Awesomplete(stockInput, { list: symbolList })
   })
 })
