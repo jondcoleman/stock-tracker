@@ -57,10 +57,14 @@ docReady(() => {
     socket.emit('addStock', symbol)
   }
 
-  addBtn.addEventListener('click', (e) => {
-    e.preventDefault()
+  function completeInput() {
     addStock(stockInput.value.toUpperCase())
     stockInput.value = ''
+  }
+
+  addBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    completeInput()
   })
 
   socket.on('stockData', (stockData) => {
@@ -73,7 +77,13 @@ docReady(() => {
 
   socket.on('symbolList', (symbolData) => {
     symbolList = symbolData
-    console.log(symbolList.length)
-    const v = new Awesomplete(stockInput, { list: symbolList })
+    const v = new Awesomplete(stockInput, {
+      list: symbolList,
+      minChars: 1,
+      maxItems: 4
+    })
+    window.addEventListener('awesomplete-selectcomplete', () => {
+      completeInput()
+    }, false)
   })
 })
