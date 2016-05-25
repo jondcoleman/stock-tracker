@@ -18,7 +18,10 @@ let symbolList = []
 
 // add stock to current list of stocks
 function addStock(symbol) {
-  // TODO: don't add a duplicate stock
+  // don't add stock if it already exists in the list
+  const filteredList = stockList.filter((stock) => stock.symbol === symbol)
+  if (filteredList.length > 0) return Promise.reject('Stock Already Exists')
+
   return quandl.getStockData(symbol)
     .then((data) => {
       const newStock = Object.assign({}, data)
@@ -54,9 +57,13 @@ initializeApp(() => {
     socket.emit('symbolList', symbolList)
 
     socket.on('addStock', (symbol) => {
-      addStock(symbol).then(() => {
-        io.sockets.emit('stockData', stockList)
-      })
+      addStock(symbol)
+        .then(() => {
+          io.sockets.emit('stockData', stockList)
+        })
+        .catch((err) => {
+          process.stdout.write(err)
+        })
     })
 
     socket.on('deleteStock', (symbol) => {
