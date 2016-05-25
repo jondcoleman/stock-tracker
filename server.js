@@ -8,79 +8,60 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 const path = require('path')
-const moment = require('moment')
-const rp = require('request-promise')
-const Converter = require('csvtojson').Converter
-
-const symbolListFile = ('./data/WIKI-datasets-codes.csv')
-
-const initialStock = 'XOM'
+const quandl = require('./app/quandl')
+const symbols = require('./app/symbols')
+const initialStock = 'XOM' // to load chart with some initial data
 
 // state
 let stockList = []
 let symbolList = []
 
-function fillSymbolList(callback) {
-  const converter = new Converter({})
-  converter.fromFile(symbolListFile, (err, result) => {
-    symbolList = result.map((item) => item.Symbol)
-    callback(result)
-  })
-}
-
-function buildApiUrl(startDate, symbol) {
-  return `https://www.quandl.com/api/v3/datasets/WIKI/${symbol}/data.json?start_date=${startDate}&api_key=${process.env.API_KEY}`
-}
-
-function getStockData(symbol, callback) {
-  const startDate = moment().subtract(3, 'month').format('YYYY-MM-DD')
-  const requestUrl = buildApiUrl(startDate, symbol)
-  const requestOptions = {
-    url: requestUrl,
-    json: true
-  }
-  rp(requestOptions)
-    .then((json) => {
-      const data = Object.assign({}, json)
-      data.symbol = symbol
-      callback(data)
+// add stock to current list of stocks
+function addStock(symbol) {
+  // TODO: don't add a duplicate stock
+  return quandl.getStockData(symbol)
+    .then((data) => {
+      const newStock = Object.assign({}, data)
+      newStock.symbol = symbol
+      stockList.push(newStock)
     })
     .catch((err) => {
       process.stdout.write(err)
     })
 }
 
-function addStock(symbol, callback) {
-  getStockData(symbol, (data) => {
-    stockList.push(data)
-    if (callback) callback()
-  })
-}
-
-function deleteStock(symbol, callback) {
+// remove stock from list
+function deleteStock(symbol) {
   stockList = stockList.filter((stock) => stock.symbol !== symbol)
-  callback()
 }
 
+// get symbol list and add initial stock, then initialize the app
 function initializeApp(callback) {
-  fillSymbolList(callback)
-  addStock(initialStock)
+  Promise.all([symbols.getList(), addStock(initialStock)])
+    .then((values) => {
+      symbolList = values[0]
+      callback()
+    })
+    .catch((err) => {
+      throw err
+    })
 }
 
 initializeApp(() => {
-  console.log(symbolList[1])
   io.on('connection', (socket) => {
+    // on client connect send initial data and symbolList
     socket.emit('stockData', stockList)
     socket.emit('symbolList', symbolList)
+
     socket.on('addStock', (symbol) => {
-      addStock(symbol, () => {
+      addStock(symbol).then(() => {
         io.sockets.emit('stockData', stockList)
       })
     })
+
     socket.on('deleteStock', (symbol) => {
-      deleteStock(symbol, () => {
-        io.sockets.emit('stockData', stockList)
-      })
+      deleteStock(symbol)
+      io.sockets.emit('stockData', stockList)
     })
   })
 
